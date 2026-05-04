@@ -112,6 +112,48 @@ aif() {
     _ai_core "falido" "$@"
 }
 
+
+airead() {
+    # 📂 Diretório dos logs
+    local dir="$HOME/Documentos/Notes/+/_output"
+    local selected file
+
+    # 🔍 Seleção de arquivo com fzf (sem preview lateral)
+    selected=$(
+        find "$dir" -maxdepth 1 -type f -name "*.md" | sort -r | while read -r file; do
+            
+            # 🧩 Parse do nome do arquivo
+            base=$(basename "$file")
+            date_part=$(echo "$base" | cut -d_ -f1)
+            time_part=$(echo "$base" | cut -d_ -f2 | tr '-' ':')
+            name_part=$(echo "$base" | cut -d_ -f3- | sed 's/\.md$//')
+
+            # 🧾 Formato exibido no fzf
+            printf "%s | %s | %s\t%s\n" "$date_part" "$time_part" "$name_part" "$file"
+
+        done | fzf \
+            --delimiter='\t' \
+            --with-nth=1 \
+            --prompt='📖 read > ' \
+            --height=80% \
+            --layout=reverse \
+            --border
+    )
+
+    # 📄 Extrai caminho real do arquivo
+    file=$(printf '%s' "$selected" | cut -f2)
+
+    # 📖 Leitura limpa (sem UI lateral)
+    if [ -n "$file" ]; then
+        clear
+        glow "$file"
+    fi
+}
+mestrepow() {
+    _ai_core "mestrepo" "$@"
+}
+
+
 aihelp() {
     local dir="$HOME/Documentos/Notes/+/_output"
     _ai_core "help" "$@"
