@@ -77,129 +77,18 @@ if ! shopt -oq posix; then
     fi
 fi
 
-_ai_core() {
-    local role="$1"; shift
-    local prompt="$*"
-    local dir="$HOME/Documentos/Notes/+/_output"
-    local file="$dir/$(date +%Y-%m-%d_%H-%M-%S)_${role}.md"
-
-    mkdir -p "$dir"
-    set +m
-
-    (
-        while true; do
-            for c in '|' '/' '-' '\'; do
-                printf "\r%s pensando..." "$c"
-                sleep 0.1
-            done
-        done
-    ) &
-
-    local pid=$!
-    local output
-    output=$(aichat --role "$role" "$prompt" 2>/dev/null)
-
-    kill "$pid" 2>/dev/null
-    wait "$pid" 2>/dev/null
-    set -m
-
-    printf "\r\033[K"
-    echo "$output" | tee "$file" | glow -
-    echo -e "\n💾 salvo em: $file"
-}
-
-aif() {
-    _ai_core "falido" "$@"
-}
+# AI Chat Functions
+[ -f "$HOME/.config/aichat/functions.sh" ] && source "$HOME/.config/aichat/ai_bash_functions.sh"
 
 
-airead() {
-    # 📂 Diretório dos logs
-    local dir="$HOME/Documentos/Notes/+/_output"
-    local selected file
-
-    # 🔍 Seleção de arquivo com fzf (sem preview lateral)
-    selected=$(
-        find "$dir" -maxdepth 1 -type f -name "*.md" | sort -r | while read -r file; do
-            
-            # 🧩 Parse do nome do arquivo
-            base=$(basename "$file")
-            date_part=$(echo "$base" | cut -d_ -f1)
-            time_part=$(echo "$base" | cut -d_ -f2 | tr '-' ':')
-            name_part=$(echo "$base" | cut -d_ -f3- | sed 's/\.md$//')
-
-            # 🧾 Formato exibido no fzf
-            printf "%s | %s | %s\t%s\n" "$date_part" "$time_part" "$name_part" "$file"
-
-        done | fzf \
-            --delimiter='\t' \
-            --with-nth=1 \
-            --prompt='📖 read > ' \
-            --height=80% \
-            --layout=reverse \
-            --border
-    )
-
-    # 📄 Extrai caminho real do arquivo
-    file=$(printf '%s' "$selected" | cut -f2)
-
-    # 📖 Leitura limpa (sem UI lateral)
-    if [ -n "$file" ]; then
-        clear
-        glow "$file"
-    fi
-}
-mestrepow() {
-    _ai_core "mestrepo" "$@"
-}
 
 
-aihelp() {
-    local dir="$HOME/Documentos/Notes/+/_output"
-    _ai_core "help" "$@"
 
-    tail -n +1 "$(ls -t "$dir"/*_help.md 2>/dev/null | head -1)" \
-        | sed '/<think>/,/<\/think>/d; s/```[a-z]*//g; s/```//g; /^$/d' \
-        | wl-copy
 
-    echo "📋 copiado"
-}
 
-ailogs() {
-    local dir="$HOME/Documentos/Notes/+/_output"
-    local selected
-    local file
 
-    selected=$(
-        find "$dir" -maxdepth 1 -type f -name "*.md" | sort -r | while read -r file; do
-            base=$(basename "$file")
-            date_part=$(echo "$base" | cut -d_ -f1)
-            time_part=$(echo "$base" | cut -d_ -f2 | tr '-' ':')
-            name_part=$(echo "$base" | cut -d_ -f3- | sed 's/\.md$//')
-            printf "%s | %s | %s\t%s\n" "$date_part" "$time_part" "$name_part" "$file"
-        done | fzf \
-            --delimiter='\t' \
-            --with-nth=1 \
-            --preview 'glow {2}' \
-            --preview-window=right:70% \
-            --prompt='📂 logs > '
-    )
 
-    file=$(printf '%s' "$selected" | cut -f2)
-    [ -n "$file" ] && glow "$file"
-}
 
-addlog() {
-    local dir="$HOME/Documentos/Notes/+/_output"
-    local label="$1"
 
-    if [ -z "$label" ]; then
-        read -rp "Nome do log (default: manual): " label
-        label="${label:-manual}"
-    fi
 
-    local file="$dir/$(date +%Y-%m-%d_%H-%M-%S)_${label}.md"
-    mkdir -p "$dir"
-    nano "$file"
-    echo -e "\n💾 salvo em: $file"
-}
+
