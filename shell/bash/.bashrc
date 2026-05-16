@@ -77,18 +77,107 @@ if ! shopt -oq posix; then
     fi
 fi
 
-# AI Chat Functions
-[ -f "$HOME/.config/aichat/functions.sh" ] && source "$HOME/.config/aichat/ai_bash_functions.sh"
+# ================================
+# AI FUNCTIONS
+# ================================
 
+_ai_core() {
+    local role="$1"; shift
+    local prompt="$*"
+    local dir="$HOME/Documentos/Notes/+/_output"
+    local file="$dir/$(date +%Y-%m-%d_%H-%M-%S)_${role}.md"
 
+    mkdir -p "$dir"
+    set +m
 
+    (while true; do
+        for c in '|' '/' '-' '\'; do
+            printf "\r%s pensando..." "$c"
+            sleep 0.1
+        done
+    done) &
 
+    local pid=$!
+    local output
+    output=$(aichat --role "$role" "$prompt" 2>/dev/null)
 
+    kill "$pid" 2>/dev/null
+    wait "$pid" 2>/dev/null
+    set -m
 
+    printf "\r\033[K"
+    echo "$output" | tee "$file" | glow -
+    echo -e "\nsalvo em: $file"
+}
 
+aif() {
+    _ai_core "falido" "$@"
+}
 
+aihelp() {
+    local dir="$HOME/Documentos/Notes/+/_output"
+    _ai_core "help" "$@"
 
+    tail -n +1 "$(ls -t "$dir"/*_help.md | head -1)" \
+        | sed '/^$/,/^[^$]/d' \
+        | wl-copy
+    echo "copiado"
+}
 
+ailogs() {
+    local dir="$HOME/Documentos/Notes/+/_output"
+    local selected
+    local file
 
+    selected=$(
+        find "$dir" -maxdepth 1 -type f -name "*.md" | sort -r | while read -r file; do
+            base=$(basename "$file")
+            date_part=$(echo "$base" | cut -d_ -f1)
+            time_part=$(echo "$base" | cut -d_ -f2 | tr '-' ':')
+            name_part=$(echo "$base" | cut -d_ -f3- | sed 's/\.md$//')
 
+            printf "%s | %s | %s\t%s\n" "$date_part" "$time_part" "$name_part" "$file"
+        done | fzf \
+            --delimiter='\t' \
+            --with-nth=1 \
+            --preview 'glow {2}' \
+            --preview-window=right:70% \
+            --prompt='logs > ' \
+            --header='Enter: abrir • Ctrl-D: deletar' \
+            --bind 'ctrl-d:execute(rm -f {2})+reload(find '"$dir"' -maxdepth 1 -type f -name "*.md" | sort -r | while read -r file; do base=$(basename "$file"); date_part=$(echo "$base" | cut -d_ -f1); time_part=$(echo "$base" | cut -d_ -2 | tr "-" ":"); name_part=$(echo "$base" | cut -d_ -f3- | sed "s/\.md$//"); printf "%s | %s | %s\t%s\n" "$date_part" "$time_part" "$name_part" "$file"; done)'
+    )
 
+    file=$(printf '%s' "$selected" | cut -f2)
+    [[ -n "$file" ]] && glow "$file"
+}
+
+addlog() {
+    local dir="$HOME/Documentos/Notes/+/_output"
+    local label="$1"
+
+    if [[ -z "$label" ]]; then
+        read -p "Nome do log (default: manual): " label
+        label="${label:-manual}"
+    fi
+
+    local file="$dir/$(date +%Y-%m-%d_%H-%M-%S)_${label}.md"
+
+    mkdir -p "$dir"
+    nano "$file"
+    echo -e "\nsalvo em: $file"
+}
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# npm global local
+export PATH="$HOME/.local/share/npm-global/bin:$PATH"
+
+# opencode
+export PATH="$HOME/.opencode/bin:$PATH"
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"

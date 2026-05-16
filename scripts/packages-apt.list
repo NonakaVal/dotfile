@@ -1,0 +1,74 @@
+# =============================================================
+# packages-apt.list
+# Pacotes APT essenciais para Debian 13 (trixie)
+# Linhas com # são comentários e ignoradas
+# =============================================================
+
+# --- sistema base ---
+build-essential
+git
+curl
+wget
+flatpak
+software-properties-common
+apt-transport-https
+ca-certificates
+gnupg
+lsb-release
+dirmngr
+
+# --- shell e terminal ---
+bash-completion
+fzf
+bat
+ripgrep
+fd-find
+less
+tree
+htop
+
+# --- dev tools ---
+pkg-config
+libssl-dev
+libffi-dev
+zlib1g-dev
+libbz2-dev
+libreadline-dev
+libsqlite3-dev
+liblzma-dev
+cmake
+make
+
+# --- desktop gnome ---
+gnome-tweaks
+gnome-shell-extensions
+dconf-cli
+gnome-shell-extension-manager
+
+# --- desktop i3 (alternativa) ---
+i3-wm
+i3blocks
+rofi
+
+# --- terminal emulador ---
+kitty
+
+# --- system tools ---
+fastfetch
+ffmpeg
+docker.io
+containerd
+docker-buildx
+
+# --- nvidia ---
+nvidia-driver
+nvidia-detect
+nvidia-settings
+nvidia-persistenced
+nvidia-kernel-dkms
+firmware-misc-nonfree
+
+# --- fonts ---
+fonts-hack
+fonts-firacode
+fonts-jetbrains-mono

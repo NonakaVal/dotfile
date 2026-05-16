@@ -1,0 +1,42 @@
+# =============================================================
+# packages-flatpak.list
+# Formato: app_id|descrição
+# Linhas com # são ignoradas
+# =============================================================
+
+# --- navegadores ---
+com.brave.Browser|Navegador Brave
+
+# --- comunicação ---
+org.telegram.desktop|Telegram
+io.github.forkgram.tdesktop|Forkgram Telegram
+
+# --- ferramentas sistema ---
+com.github.tchx84.Flatseal|Permissões Flatpak
+io.github.vikdevelop.SaveDesktop|Backup desktop
+io.missioncenter.MissionCenter|Monitor sistema
+it.mijorus.gearlever|AppImage manager
+com.protonvpn.www|ProtonVPN
+
+# --- midia ---
+io.github.diegopvlk.Cine|Player de mídia
+org.gnome.gitlab.YaLTeR.VideoTrimmer|Editor de vídeo
+com.obsproject.Studio|OBS Studio
+io.github.seadve.Kooha|Gravador de tela
+
+# --- dev / hacking ---
+com.github.skylot.jadx|Decompilador Java
+io.github.shiftey.Desktop|GitHub Desktop
+com.usebottles.bottles|Windows apps via Wine
+com.rustdesk.RustDesk|Acesso remoto
+
+# --- produtividade ---
+com.github.dahenson.agenda|Agenda
+io.github.zhrexl.thisweekinmylife|Planejamento semanal
+org.gnome.Characters|Mapa de caracteres
+
+# --- utilitarios ---
+org.kde.dolphin|Gerenciador de arquivos
+org.gnome.baobab|Análise de disco
+org.gnome.DejaDup|Backup
+io.gitlab.theevilskeleton.Upscaler|Upscaler de imagens

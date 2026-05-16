@@ -1,0 +1,7 @@
+# =============================================================
+# packages-cargo.list
+# Ferramentas instaladas via cargo (Rust)
+# =============================================================
+
+aichat
+basalt-tui
